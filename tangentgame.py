@@ -45,7 +45,7 @@ class Ball(pygame.sprite.Sprite):
         Called by update() or the main program loop if there is a collision.
         """
         self.rect.y = random.randrange(screen_height/65)*65
-        self.rect.x = random.randrange(screen_width+10, screen_width*2+10)
+        self.rect.x = random.randrange(screen_width+10, screen_width+15)
  
     def update(self, speed):
         """ Called each frame. """
@@ -54,7 +54,7 @@ class Ball(pygame.sprite.Sprite):
         self.rect.x -= self.dx
  
         # If block is too far down, reset to top of screen.
-        if self.rect.x < -10:
+        if self.rect.x < -65:
             self.reset_pos()
  
  
@@ -81,8 +81,8 @@ class Player(Ball):
         # of rect.x and rect.y
         pygame.draw.circle(self.image, (BLUE), (width/2, height/2), width/2, 5)
         self.rect = self.image.get_rect()
-        self.rect.x = random.randrange(200,500)
-        self.rect.y = random.randrange(100,300)
+        self.rect.x = random.randrange(100,600)
+        self.rect.y = random.randrange(50,350)
         self.xdir = 1
         self.ydir = 1
 
@@ -99,29 +99,39 @@ class Player(Ball):
         # Set the player object to the mouse location
         #self.rect.x = pos[0]
         #self.rect.y = pos[1]
+        
+        self.dx = speed*3
+        self.dy = speed*3
+        #print(self.on)
+        #if self.on == False:    
 
-        if self.on == False:    
-
-            if self.rect.x >= 800:
-                self.xdir = -1
-            elif self.rect.x <= 0:
-                self.xdir = 1
-            if self.rect.y >= 400:
-                self.ydir = -1
-            elif self.rect.y <= 0:
-                self.ydir = 1
+        if self.rect.x >= 800:
+            self.xdir = -1
+        elif self.rect.x <= 0:
+            self.xdir = 1
+        if self.rect.y >= 390:
+            self.ydir = -1
+        elif self.rect.y <= 0:
+            self.ydir = 1
 
 
-            self.rect.x = self.rect.x+(self.xdir*self.dx)
-            self.rect.y = self.rect.y+(self.ydir*self.dy)
-        elif self.on == True:
-            self.rect.x = self.rect.x-speed/2
- 
+        self.rect.x = self.rect.x+(self.xdir*self.dx)
+        self.rect.y = self.rect.y+(self.ydir*self.dy)
+
+
+    def orbit(self, speed):
+        
+        self.rect.x = self.rect.x-speed
+
+    
+
+
+        
 # Initialize Pygame
 pygame.init()
  
 # Set the height and width of the screen
-screen_width = 700
+screen_width = 800
 screen_height = 400
 screen = pygame.display.set_mode([screen_width, screen_height])
 score = 0
@@ -134,12 +144,12 @@ ball_list = pygame.sprite.Group()
 # This is a list of every sprite. All blocks and the player block as well.
 all_sprites_list = pygame.sprite.Group()
  
-for i in range(20):
+for i in range(11):
     # This represents a blall
     ball = Ball(WHITE, 60, 60, speed)
  
     # Set a random location for the block
-    ball.rect.x = random.randrange(screen_width*2/65)*65
+    ball.rect.x = random.randrange(screen_width/65)*65
     ball.rect.y = random.randrange(screen_height/65)*65
  
     # Add the block to the list of objects
@@ -148,10 +158,13 @@ for i in range(20):
  
 # Create a red player block
 player = Player(WHITE, 20, 20, speed)
+playerGroup = pygame.sprite.Group()
+playerGroup.add(player)
 all_sprites_list.add(player)
  
 # Loop until the user clicks the close button.
 done = False
+on = False
  
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
@@ -168,26 +181,35 @@ while not done:
     screen.fill(WHITE)
     
     time += 1
-    if time % 500 == 0:
-        speed +=1
+    if time % 300 == 0:
+        speed +=.5
+        
+
     # Calls update() method on every sprite in the list
-    all_sprites_list.update(speed)
+    ball_list.update(speed)
+    ii = 0
+    for ball in ball_list:
+        print(ball.rect.y)
+        if pygame.sprite.collide_rect(player, ball):
+            
+            ii +=1
+
+
+    if ii > 0:
+        player.orbit(speed)
+
+    else:
+        player.update(speed)  
+
+
+
+    score = time
+    print(score)
+
  
-    # See if the player block has collided with anything.
-    balls_hit_list = pygame.sprite.spritecollide(player, ball_list, False)
- 
-    # Check the list of collisions.
-    for ball in balls_hit_list:
-        player.on = True
-        score += 1
-        print(score)
-        print(speed)
- 
-        # Reset block to the top of the screen to fall again.
-        #ball.reset_pos()
- 
-    # Draw all the spites
-    all_sprites_list.draw(screen)
+    # Draw all the sprites
+    ball_list.draw(screen)
+    playerGroup.draw(screen)
  
     # Limit to 20 frames per second
     clock.tick(20)
