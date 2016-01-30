@@ -5,6 +5,7 @@ Sprites
  
 import pygame
 import random
+import math
  
 # Define some colors
 BLACK = (0, 0, 0)
@@ -89,6 +90,9 @@ class Player(Ball):
         self.dx = speed*2
         self.dy = speed*2
 
+        self.theta = 0
+        self.thetav = 0
+
     def update(self, speed):
         # Get the current mouse position. This returns the position
         # as a list of two numbers.
@@ -119,9 +123,26 @@ class Player(Ball):
         self.rect.y = self.rect.y+(self.ydir*self.dy)
 
 
-    def orbit(self, speed):
+    def orbit(self, speed, ballx, bally):
         
-        self.rect.x = self.rect.x-speed
+        #self.rect.x = self.rect.x-speed
+
+        self.thetav = math.atan(speed/30)
+        
+        self.theta = math.atan((self.rect.y-bally)/(self.rect.x-ballx))
+
+
+        self.xdir = 1*math.sin(self.theta)
+
+        self.ydir = 1*math.cos(self.theta)
+
+        self.dx = 30*math.sin(self.thetav)-speed
+        self.dy = 30*math.cos(self.thetav)
+
+
+
+        self.rect.x = self.rect.x+(self.xdir*self.dx)
+        self.rect.y = self.rect.y+(self.ydir*self.dy)
 
     
 
@@ -189,10 +210,13 @@ while not done:
     ball_list.update(speed)
     ii = 0
     for ball in ball_list:
-        print(ball.rect.y)
         if pygame.sprite.collide_rect(player, ball):
-            
-            ii +=1
+            player.orbit(speed, ball.rect.x, ball.rect.y)
+
+
+        #if pygame.sprite.collide_rect(player, ball):
+         #   
+          #  ii +=1
 
 
     if ii > 0:
