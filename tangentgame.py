@@ -1,6 +1,6 @@
 """
 This is an iteration of the tangent game, using pygame and
-Sprites
+Sprite objects
 """
  
 import pygame
