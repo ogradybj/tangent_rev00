@@ -39,12 +39,12 @@ class Ball(pygame.sprite.Sprite):
 		"""
 
 		self.rect.y = random.randrange(400/65)*65
-		self.rect.x = random.randrange(800*2, 800*3)
+		self.rect.x = random.randrange(800, 800*2)
 
 	def update(self, speed):
 		""" called each frame to update balls """
 
-		self.dx = speed*2
+		self.dx = speed
 		self.rect.x -= self.dx
 
 		if self.rect.x < -80:
@@ -64,11 +64,16 @@ class Player(Ball):
     	self.rect = self.image.get_rect()
     	self.rect.x = 400
     	self.rect.y = 200
-    	self.xdir = 1
+    	self.xdir = -1
     	self.ydir = 1
 
-    	self.dx = speed*1*self.xdir
-    	self.dy = speed*1*self.ydir
+    	self.theta = 0
+    	self.rotdir = 1
+    	self.thetad = self.theta+self.rotdir*3.14159/2
+    	
+
+    	self.dx = speed*4*self.xdir
+    	self.dy = speed*4*self.ydir
 
     def update(self, speed, zball=None, cluck=False):
 
@@ -81,11 +86,23 @@ class Player(Ball):
     		self.xdir = self.xdir*(-1)
     		self.ydir = self.ydir*(-1)
 
-    		self.dx = speed*1*self.xdir
-    		self.dy = speed*1*self.ydir
+    		self.theta = math.atan2((self.rect.center[1]-zball.rect.center[1]),(self.rect.center[0]-zball.rect.center[0]))
+    		self.rotdir = 1
+    		self.thetad = self.theta+self.rotdir*3.14159/2
+    		self.theta = self.theta+self.rotdir*.09
+    		# print(self.theta)
+
+    		# self.dx = speed*1*self.xdir
+    		# self.dy = speed*1*self.ydir
+    		# self.rect.x = self.rect.x+zball.dx
+    		# self.rect.y = self.rect.y
+    		print('True')
+    		
+    		self.rect.x = zball.rect.center[0]+30*math.cos(self.theta+.15*self.rotdir)
+    		self.rect.y = zball.rect.center[1]+30*math.sin(self.theta+.15*self.rotdir)
 
 
-    	else:
+    	elif cluck == False:
     		if self.rect.x >= 790:
     			self.xdir = self.xdir*(-1)
     		elif self.rect.x <= 10:
@@ -95,11 +112,11 @@ class Player(Ball):
     		elif self.rect.y <= 10:
     			self.ydir = self.ydir*(-1)
 
-    		self.dx = speed*1*self.xdir
-    		self.dy = speed*1*self.ydir
+    		self.dx = speed*4*self.xdir
+    		self.dy = speed*4*self.ydir
 
-    	self.rect.x = self.rect.x+self.dx
-    	self.rect.y = self.rect.y+self.dy
+    		self.rect.x = self.rect.x+self.dx
+    		self.rect.y = self.rect.y+self.dy
 
 
 #initialize Pygame
@@ -158,8 +175,9 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
         elif event.type == pygame.MOUSEBUTTONUP:
-            
-            player.update(speed, on, False)
+            onball = None
+            colball = False
+            player.update(speed, onball, colball)
  
     # Clear the screen
     screen.fill(WHITE)
@@ -180,16 +198,16 @@ while not done:
         if pygame.sprite.collide_rect(player, ball):
             onball = ball
             colball = True
-            player.update(speed, onball, colball)
-            print(ball.rect.center[0])
-            print(ball.rect.center[1])
 
+            
+            
 
+    player.update(speed, onball, colball)
         #if no collision keep updating like normal
-        else:
-        	onball = None
-        	colball = False
-        	player.update(speed, None, colball) 
+        # else:
+        # 	onball = None
+        # 	colball = False
+        # 	player.update(speed, onball, colball) 
 
     score = time
 
@@ -201,5 +219,8 @@ while not done:
     pygame.display.flip()
 
 pygame.quit()
+
+
+
 
 
