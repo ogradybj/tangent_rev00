@@ -8,36 +8,41 @@ import math
 #colors defined
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
+GREEN = (0, 220, 0)
+RED = (220, 0, 0)
 BLUE = (0, 0, 255)
+YELLOW = (235, 235, 35)
 
 class Block(pygame.sprite.Sprite):
     """
-    This class represents the ball
+    This class represents the blocks at either end of the game
     It derives from the "Sprite" class in Pygame
     """
     def __init__(self, color, width, height):
         """ Constructor. Pass in the color of the block,
         and its x and y position. """
         # Call the parent class (Sprite) constructor
-        #super(pygame.sprite.Sprite, self).__init__()
+        #used to be listed as, but is incorrect: super(pygame.sprite.Sprite, self).__init__()
         pygame.sprite.Sprite.__init__(self)
  
-        # Create an image of the block, and fill it with a color.
-        # This could also be an image loaded from the disk.
+        # Create an image of the block, fill it with color and create variable for color.
         self.image = pygame.Surface([width, height])
         self.image.fill(color)
         self.color = color
  
         # Fetch the rectangle object that has the dimensions of the image
         # image.
-        # Update the position of this object by setting the values
-        # of rect.x and rect.y
         self.rect = self.image.get_rect()
 
     def update(self):
+        """ as it is hit, it will turn from black to green to yellow to red, once red and is hit the game ends"""
         if self.color == BLACK:
+            self.image.fill(GREEN)
+            self.color = GREEN
+        elif self.color == GREEN:
+            self.image.fill(YELLOW)
+            self.color = YELLOW
+        elif self.color == YELLOW:
             self.image.fill(RED)
             self.color = RED
         elif self.color == RED:
@@ -62,15 +67,15 @@ class Ball(pygame.sprite.Sprite):
         self.dx = speed
 
     def reset_pos(self):
-        """ Reset position to the top of the screen"""
-        self.rect.y = random.randrange(400/65)*65
-        self.rect.x = 810
+        """ Reset position to the right edge of the screen of the screen"""
+        self.rect.y = random.randrange(330/65)*65
+        self.rect.x = 800
 
     def update(self, speed):
         """ called each frame to update balls """
         self.dx = speed
         self.rect.x -= self.dx
-        self.rect.y = self.rect.y + random.randrange(-1, 2)
+        self.rect.y = self.rect.y + random.randrange(-2, 3)
         if self.rect.y < 10:
             self.rect.y = self.rect.y + 2
         if self.rect.y > 390:
@@ -78,7 +83,9 @@ class Ball(pygame.sprite.Sprite):
         if self.rect.x < -80:
             self.reset_pos()
 
-class Player(Ball):
+class Player(pygame.sprite.Sprite):
+    """This class is the player/character that shows up on the screen
+    and is controlled by the user. """
     def __init__(self, diameter, speed):
         pygame.sprite.Sprite.__init__(self)
 
@@ -94,6 +101,7 @@ class Player(Ball):
         self.rect.y = 200
         self.xdir = -.707
         self.ydir = .707
+        self.ii=0
 
 
         self.theta = 0
@@ -104,18 +112,26 @@ class Player(Ball):
         self.dx = speed*3*self.xdir
         self.dy = speed*3*self.ydir
 
+    def click(self, click):
+        ii = 0
     def update(self, speed, zball=None, cluck=False):
 
-
-
+        """ISSUES IN THIS SECTION
+        cannot get the orbit to work correctly"""
         if cluck == True:
-            self.theta = math.atan2((self.rect.center[1]-zball.rect.center[1]),(self.rect.center[0]-zball.rect.center[0]))
+            ii = self.ii
+            if ii ==0:
+                self.theta = math.atan2((self.rect.center[1]-zball.rect.center[1]),(self.rect.center[0]-zball.rect.center[0]))
+                ii +=1
+            else:
+                self.theta = speed + 0.1
+            print(self.theta)
             self.rotdir = -1
             self.thetad = self.theta+self.rotdir*3.14159/2
             self.xdir = speed*1*math.cos(self.thetad)
             self.ydir = speed*1*math.sin(self.thetad)
-            self.rect.x = zball.rect.center[0]+30*math.cos(self.theta)
-            self.rect.y = zball.rect.center[1]+30*math.sin(self.theta)
+            self.rect.x = zball.rect.center[0]+30*math.cos(self.theta+.1)
+            self.rect.y = zball.rect.center[1]+30*math.sin(self.theta+.1)
             self.theta = self.theta+(self.rotdir*.09)
 
         
@@ -131,8 +147,9 @@ class Player(Ball):
                 self.xdir = self.xdir*(-1)
             if self.rect.y >= 390:
                 self.ydir = self.ydir*(-1)
-            elif self.rect.y <= 10:
+            elif self.rect.y <= 5:
                 self.ydir = self.ydir*(-1)
+                self.rect.y = 6
 
             self.dx = speed*3*self.xdir
             self.dy = speed*3*self.ydir
@@ -169,13 +186,13 @@ end2.rect.x = 788
 end2.rect.y = 0
 block_list.add(end2)
  #creating all the balls, randomly distributed
-for i in range(10):
+for i in range(9):
     # This represents a blall
     ball = Ball(60, speed)
  
     # Set a random location for the block
     ball.rect.x = i*80+screen_width
-    ball.rect.y = random.randrange(screen_height/80)*80
+    ball.rect.y = random.randrange(330/65)*65
  
     # Add the ball to the list of objects
     ball_list.add(ball)
@@ -210,6 +227,8 @@ while not done:
             onball = None
             colball = False
             off = True
+            click = True
+            player.click(click)
             #player.update(speed, onball, colball)
  
     # Clear the screen
@@ -217,8 +236,8 @@ while not done:
     
     #periodically increase the speed to make the game more difficult
     time += 1
-    if time % 200 == 0:
-        speed +=.5
+    if time % 500 == 0:
+        speed +=.25
         
 
     
