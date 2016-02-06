@@ -246,8 +246,8 @@ while not done:
         #   player.update(speed, onball, colball) 
 
     score = time
+    print(score)
 
-    
     ball_list.draw(screen)
     block_list.draw(screen)
     playerGroup.draw(screen)
