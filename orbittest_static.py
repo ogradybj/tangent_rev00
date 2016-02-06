@@ -73,7 +73,7 @@ class Ball(pygame.sprite.Sprite):
         """ called each frame to update balls """
         self.dx = speed
         self.rect.x -= self.dx
-        self.rect.y = self.rect.y + random.randrange(-2, 3)
+        #self.rect.y = self.rect.y + random.randrange(-2, 3)
         if self.rect.y < 10:
             self.rect.y = self.rect.y + 2
         if self.rect.y > 390:
@@ -184,13 +184,13 @@ end2.rect.x = 788
 end2.rect.y = 0
 block_list.add(end2)
  #creating all the balls, randomly distributed
-for i in range(9):
+for i in range(1):
     # This represents a blall
-    ball = Ball(60, speed)
+    ball = Ball(60, 0)
  
     # Set a random location for the block
-    ball.rect.x = i*80+screen_width
-    ball.rect.y = random.randrange(330/65)*65
+    ball.rect.x = 450
+    ball.rect.y = 200
  
     # Add the ball to the list of objects
     ball_list.add(ball)
@@ -254,7 +254,7 @@ while not done:
         if pygame.sprite.collide_rect(player, block):
             block.update()
     # Calls update() method on every ball in the list
-    ball_list.update(speed)
+    ball_list.update(0)
     player.update(speed, onball, colball)
         #if no collision keep updating like normal
         # else:

@@ -73,7 +73,7 @@ class Ball(pygame.sprite.Sprite):
         """ called each frame to update balls """
         self.dx = speed
         self.rect.x -= self.dx
-        self.rect.y = self.rect.y + random.randrange(-2, 3)
+        #self.rect.y = self.rect.y + random.randrange(-2, 3)
         if self.rect.y < 10:
             self.rect.y = self.rect.y + 2
         if self.rect.y > 390:
@@ -95,7 +95,7 @@ class Player(pygame.sprite.Sprite):
 
         pygame.draw.circle(self.image, (BLUE), (diameter/2, diameter/2), diameter/2, 5)
         self.rect = self.image.get_rect()
-        self.rect.x = 400
+        self.rect.x = 250 #400
         self.rect.y = 200
         self.xdir = -.707
         self.ydir = .707
@@ -110,31 +110,45 @@ class Player(pygame.sprite.Sprite):
         self.dx = speed*3*self.xdir
         self.dy = speed*3*self.ydir
 
-    def click(self, click):
+    def click(self, click, speed):
         ii = 0
-    def update(self, speed, zball=None, cluck=False):
+        self.update(speed, None, False)
+    def update(self, speed, zball=None, cluck=True):
 
         """ISSUES IN THIS SECTION
         cannot get the orbit to work correctly"""
         if cluck == True:
-            ii = self.ii
-            if ii ==0:
-                self.theta = math.atan2((self.rect.center[1]-zball.rect.center[1]),(self.rect.center[0]-zball.rect.center[0]))
-                ii +=1
-            else:
-                self.theta = speed + 0.1
-            print(self.theta)
+        #testing to make player orbit nothing
+            centerx = 220
+            centery = 200
+            #self.theta = math.atan2((self.rect.y+10-centery),(self.rect.x+10-centerx))
             self.rotdir = -1
+            self.theta = self.theta+.05*speed*self.rotdir
+            
             self.thetad = self.theta+self.rotdir*3.14159/2
+
+            self.rect.x = centerx + 30*math.cos(self.theta)
+            self.rect.y = centery + 30*math.sin(self.theta)
+            print(self.rect.x, self.rect.y)
+            print(self.theta)
             self.xdir = speed*1*math.cos(self.thetad)
             self.ydir = speed*1*math.sin(self.thetad)
-            self.rect.x = zball.rect.center[0]+30*math.cos(self.theta+.1)
-            self.rect.y = zball.rect.center[1]+30*math.sin(self.theta+.1)
-            self.theta = self.theta+(self.rotdir*.09)
 
-        
-        #self.rect.x = zball.rect.center[0]+30*math.cos(self.theta+.15*self.rotdir)
-        #self.rect.y = zball.rect.center[1]+30*math.sin(self.theta+.15*self.rotdir)
+
+        # ii = self.ii
+        # if ii ==0:
+        #     self.theta = math.atan2((self.rect.center[1]-zball.rect.center[1]),(self.rect.center[0]-zball.rect.center[0]))
+        #     ii +=1
+        # else:
+        #     self.theta = speed + 0.1
+        # print(self.theta)
+        # self.rotdir = -1
+        # self.thetad = self.theta+self.rotdir*3.14159/2
+        # self.xdir = speed*1*math.cos(self.thetad)
+        # self.ydir = speed*1*math.sin(self.thetad)
+        # self.rect.x = zball.rect.center[0]+30*math.cos(self.theta+.1)
+        # self.rect.y = zball.rect.center[1]+30*math.sin(self.theta+.1)
+        # self.theta = self.theta+(self.rotdir*.09)
 
 
 
@@ -184,13 +198,13 @@ end2.rect.x = 788
 end2.rect.y = 0
 block_list.add(end2)
  #creating all the balls, randomly distributed
-for i in range(9):
+for i in range(1):
     # This represents a blall
-    ball = Ball(60, speed)
+    ball = Ball(60, 0)
  
     # Set a random location for the block
-    ball.rect.x = i*80+screen_width
-    ball.rect.y = random.randrange(330/65)*65
+    ball.rect.x = 450
+    ball.rect.y = 200
  
     # Add the ball to the list of objects
     ball_list.add(ball)
@@ -209,7 +223,7 @@ all_sprites_list.add(player)
 # possibly use these later, still trying to work out orbit
 done = False
 onball = None
-colball = False
+colball = True
 off = False
 ii = 0
  
@@ -226,8 +240,8 @@ while not done:
             colball = False
             off = True
             click = True
-            player.click(click)
-            #player.update(speed, onball, colball)
+            player.click(click, speed)
+            
  
     # Clear the screen
     screen.fill(WHITE)
@@ -254,7 +268,7 @@ while not done:
         if pygame.sprite.collide_rect(player, block):
             block.update()
     # Calls update() method on every ball in the list
-    ball_list.update(speed)
+    ball_list.update(0)
     player.update(speed, onball, colball)
         #if no collision keep updating like normal
         # else:
@@ -263,7 +277,7 @@ while not done:
         #   player.update(speed, onball, colball) 
 
     score = time
-    print(score)
+    #print(score)
 
     ball_list.draw(screen)
     block_list.draw(screen)
