@@ -107,6 +107,7 @@ class Player(pygame.sprite.Sprite):
         self.dirmag = math.sqrt(self.xdir**2+self.ydir**2)
         self.thetavect = numpy.array([math.cos(self.theta), math.sin(self.theta)])
         self.playervect = numpy.array([(self.xdir/self.dirmag),(self.ydir/self.dirmag)])
+        self.colangle = 3.14159/2
 
 
         self.theta = 0
@@ -116,6 +117,12 @@ class Player(pygame.sprite.Sprite):
 
         self.dx = speed*2.5*self.xdir
         self.dy = speed*2.5*self.ydir
+    def calcdir(self):
+        self.thetavect = numpy.array([math.cos(self.theta), math.sin(self.theta)])
+        self.playervect = numpy.array([(self.xdir/self.dirmag),(self.ydir/self.dirmag)])
+
+        self.colangle = math.acos(numpy.dot(self.playervect, self.thetavect))
+
 
     def click(self, click):
         ii = 0
@@ -135,11 +142,11 @@ class Player(pygame.sprite.Sprite):
             self.xdir = speed*1*math.cos(self.thetad)
             self.ydir = speed*1*math.sin(self.thetad)
             self.dirmag = math.sqrt(self.xdir**2+self.ydir**2)
-            self.thetavect = numpy.array([math.cos(self.theta), math.sin(self.theta)])
-            self.playervect = numpy.array([(self.xdir/self.dirmag),(self.ydir/self.dirmag)])
-            print(math.acos(numpy.dot(self.playervect, self.thetavect)))
+            # self.thetavect = numpy.array([math.cos(self.theta), math.sin(self.theta)])
+            # self.playervect = numpy.array([(self.xdir/self.dirmag),(self.ydir/self.dirmag)])
+            print(self.colangle)
 
-            if math.acos(numpy.dot(self.playervect, self.thetavect)) >= 3.14159:
+            if self.colangle <= 2:
                 self.rotdir = 1
             else:
                 self.rotdir = -1
@@ -158,7 +165,7 @@ class Player(pygame.sprite.Sprite):
             elif self.rect.y <= 5:
                 self.ydir = self.ydir*(-1)
                 self.rect.y = 6
-
+            self.dirmag = math.sqrt(self.xdir**2+self.ydir**2)
             self.dx = speed*2.5*self.xdir
             self.dy = speed*2.5*self.ydir
 
@@ -256,9 +263,11 @@ while not done:
 
 
         if math.sqrt((player.rect.center[0]-ball.rect.center[0])**2+(player.rect.center[1]-ball.rect.center[1])**2) <=36:#pygame.sprite.collide_rect(player, ball):
+
             onball = ball
             colball = True
             player.theta = math.atan2((player.rect.center[1]-ball.rect.center[1]),(player.rect.center[0]-ball.rect.center[0]))
+            player.calcdir()
 
         
     for block in block_list:
