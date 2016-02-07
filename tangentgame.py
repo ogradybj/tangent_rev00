@@ -147,12 +147,12 @@ class Player(pygame.sprite.Sprite):
             print(self.colangle)
 
             if self.colangle <= 2:
-                self.rotdir = 1
-            else:
                 self.rotdir = -1
+            else:
+                self.rotdir = 1
             
-            self.rect.x = zball.rect.center[0]+38*math.cos(self.theta+.1)-10
-            self.rect.y = zball.rect.center[1]+38*math.sin(self.theta+.1)-10
+            self.rect.x = zball.rect.center[0]+38*math.cos(self.theta+(0.12*speed))-10
+            self.rect.y = zball.rect.center[1]+38*math.sin(self.theta+(0.12*speed))-10
             self.theta = self.theta+(self.rotdir*.09)
 
         elif cluck == False:
@@ -191,12 +191,12 @@ block_list = pygame.sprite.Group()
  
 # This is a list of every sprite. All blocks and the player block as well.
 all_sprites_list = pygame.sprite.Group()
-end1 = Block(BLACK, 12, 400)
+end1 = Block(BLACK, 11, 400)
 end1.rect.x = 0
 end1.rect.y = 0
 block_list.add(end1)
-end2 = Block(BLACK, 12, 400)
-end2.rect.x = 788
+end2 = Block(BLACK, 11, 400)
+end2.rect.x = 789
 end2.rect.y = 0
 block_list.add(end2)
  #creating all the balls, randomly distributed
@@ -250,7 +250,7 @@ while not done:
     
     #periodically increase the speed to make the game more difficult
     time += 1
-    if time % 500 == 0:
+    if time % 400 == 0:
         speed +=.25
         
 
