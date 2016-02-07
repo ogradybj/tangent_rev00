@@ -60,7 +60,7 @@ class Ball(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface([diameter, diameter])
         self.image.fill(WHITE)
-        pygame.draw.circle(self.image, (BLACK), (diameter/2, diameter/2), diameter/2, 5)
+        pygame.draw.circle(self.image, (BLACK), (diameter/2, diameter/2), diameter/2, 6)
         self.rect = self.image.get_rect()
         self.dx = speed
 
@@ -249,6 +249,7 @@ while not done:
         if math.sqrt((player.rect.center[0]-ball.rect.center[0])**2+(player.rect.center[1]-ball.rect.center[1])**2) <=36:#pygame.sprite.collide_rect(player, ball):
             onball = ball
             colball = True
+            player.theta = math.atan2((player.rect.center[1]-ball.rect.center[1]),(player.rect.center[0]-ball.rect.center[0]))
         
     for block in block_list:
         if pygame.sprite.collide_rect(player, block):
