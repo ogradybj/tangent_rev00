@@ -1,6 +1,7 @@
 import pygame
 import random
 import math
+import numpy
 
 
 #colors defined
@@ -100,6 +101,12 @@ class Player(pygame.sprite.Sprite):
         self.xdir = -.707
         self.ydir = .707
         self.ii=0
+        self.theta = 0
+        self.rotdir = 1
+        self.thetad = self.theta+self.rotdir*3.14159/2
+        self.dirmag = math.sqrt(self.xdir**2+self.ydir**2)
+        self.thetavect = numpy.array([math.cos(self.theta), math.sin(self.theta)])
+        self.playervect = numpy.array([(self.xdir/self.dirmag),(self.ydir/self.dirmag)])
 
 
         self.theta = 0
@@ -107,8 +114,8 @@ class Player(pygame.sprite.Sprite):
         self.thetad = self.theta+self.rotdir*3.14159/2
         
 
-        self.dx = speed*2*self.xdir
-        self.dy = speed*2*self.ydir
+        self.dx = speed*2.5*self.xdir
+        self.dy = speed*2.5*self.ydir
 
     def click(self, click):
         ii = 0
@@ -119,24 +126,27 @@ class Player(pygame.sprite.Sprite):
         if cluck == True:
             ii = self.ii
             if ii ==0:
-                #self.theta = math.atan2((self.rect.center[1]-zball.rect.center[1]),(self.rect.center[0]-zball.rect.center[0]))
                 ii +=1
             else:
                 self.theta = speed + 0.1
-            print(self.theta)
-            self.rotdir = -1
+            
+            
             self.thetad = self.theta+self.rotdir*3.14159/2
             self.xdir = speed*1*math.cos(self.thetad)
             self.ydir = speed*1*math.sin(self.thetad)
+            self.dirmag = math.sqrt(self.xdir**2+self.ydir**2)
+            self.thetavect = numpy.array([math.cos(self.theta), math.sin(self.theta)])
+            self.playervect = numpy.array([(self.xdir/self.dirmag),(self.ydir/self.dirmag)])
+            print(math.acos(numpy.dot(self.playervect, self.thetavect)))
+
+            if math.acos(numpy.dot(self.playervect, self.thetavect)) >= 3.14159:
+                self.rotdir = 1
+            else:
+                self.rotdir = -1
+            
             self.rect.x = zball.rect.center[0]+38*math.cos(self.theta+.1)-10
             self.rect.y = zball.rect.center[1]+38*math.sin(self.theta+.1)-10
             self.theta = self.theta+(self.rotdir*.09)
-
-        
-        #self.rect.x = zball.rect.center[0]+30*math.cos(self.theta+.15*self.rotdir)
-        #self.rect.y = zball.rect.center[1]+30*math.sin(self.theta+.15*self.rotdir)
-
-
 
         elif cluck == False:
             if self.rect.x >= 770:
@@ -149,12 +159,11 @@ class Player(pygame.sprite.Sprite):
                 self.ydir = self.ydir*(-1)
                 self.rect.y = 6
 
-            self.dx = speed*2*self.xdir
-            self.dy = speed*2*self.ydir
+            self.dx = speed*2.5*self.xdir
+            self.dy = speed*2.5*self.ydir
 
             self.rect.x = self.rect.x+self.dx
             self.rect.y = self.rect.y+self.dy
-
 
 #initialize Pygame
 pygame.init()
@@ -250,6 +259,7 @@ while not done:
             onball = ball
             colball = True
             player.theta = math.atan2((player.rect.center[1]-ball.rect.center[1]),(player.rect.center[0]-ball.rect.center[0]))
+
         
     for block in block_list:
         if pygame.sprite.collide_rect(player, block):
