@@ -107,8 +107,8 @@ class Player(pygame.sprite.Sprite):
         self.thetad = self.theta+self.rotdir*3.14159/2
         
 
-        self.dx = speed*3*self.xdir
-        self.dy = speed*3*self.ydir
+        self.dx = speed*2*self.xdir
+        self.dy = speed*2*self.ydir
 
     def click(self, click):
         ii = 0
@@ -119,7 +119,7 @@ class Player(pygame.sprite.Sprite):
         if cluck == True:
             ii = self.ii
             if ii ==0:
-                self.theta = math.atan2((self.rect.center[1]-zball.rect.center[1]),(self.rect.center[0]-zball.rect.center[0]))
+                #self.theta = math.atan2((self.rect.center[1]-zball.rect.center[1]),(self.rect.center[0]-zball.rect.center[0]))
                 ii +=1
             else:
                 self.theta = speed + 0.1
@@ -128,8 +128,8 @@ class Player(pygame.sprite.Sprite):
             self.thetad = self.theta+self.rotdir*3.14159/2
             self.xdir = speed*1*math.cos(self.thetad)
             self.ydir = speed*1*math.sin(self.thetad)
-            self.rect.x = zball.rect.center[0]+30*math.cos(self.theta+.1)
-            self.rect.y = zball.rect.center[1]+30*math.sin(self.theta+.1)
+            self.rect.x = zball.rect.center[0]+38*math.cos(self.theta+.1)-10
+            self.rect.y = zball.rect.center[1]+38*math.sin(self.theta+.1)-10
             self.theta = self.theta+(self.rotdir*.09)
 
         
@@ -149,8 +149,8 @@ class Player(pygame.sprite.Sprite):
                 self.ydir = self.ydir*(-1)
                 self.rect.y = 6
 
-            self.dx = speed*3*self.xdir
-            self.dy = speed*3*self.ydir
+            self.dx = speed*2*self.xdir
+            self.dy = speed*2*self.ydir
 
             self.rect.x = self.rect.x+self.dx
             self.rect.y = self.rect.y+self.dy
@@ -189,7 +189,7 @@ for i in range(9):
     ball = Ball(60, speed)
  
     # Set a random location for the block
-    ball.rect.x = i*80+screen_width
+    ball.rect.x = i*98+screen_width
     ball.rect.y = random.randrange(330/65)*65
  
     # Add the ball to the list of objects
@@ -246,7 +246,7 @@ while not done:
         #calling player.orbit method
 
 
-        if math.sqrt((player.rect.center[0]-ball.rect.center[0])**2+(player.rect.center[1]-ball.rect.center[1])**2) <=40:#pygame.sprite.collide_rect(player, ball):
+        if math.sqrt((player.rect.center[0]-ball.rect.center[0])**2+(player.rect.center[1]-ball.rect.center[1])**2) <=36:#pygame.sprite.collide_rect(player, ball):
             onball = ball
             colball = True
         
