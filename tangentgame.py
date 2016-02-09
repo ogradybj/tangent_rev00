@@ -46,6 +46,7 @@ class Block(pygame.sprite.Sprite):
             self.color = RED
         elif self.color == RED:
             print("GAME OVER")
+            gameover()
 
 
 class Ball(pygame.sprite.Sprite):
@@ -178,6 +179,33 @@ def text_objects(text, font):
     textSurface = font.render(text, True, BLACK)
     return textSurface, textSurface.get_rect()
 
+def gameover():
+
+    largeText = pygame.font.SysFont("cmr10",115)
+    TextSurf, TextRect = text_objects("GAME OVER", largeText)
+    TextRect.center = ((400),(100))
+    screen.blit(TextSurf, TextRect)
+
+    while 1:
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    pause = True
+                    main()
+                
+        #gameDisplay.fill(white)
+        
+
+        #button("Continue",150,450,100,50,green,bright_green,unpause)
+        #button("Quit",550,450,100,50,red,bright_red,quitgame)
+
+        pygame.display.update()
+        #clock.tick(15)
+
 def paused(screen):
 
     largeText = pygame.font.SysFont("cmr10",115)
@@ -238,7 +266,7 @@ def main():
     screen_width = 800
     screen_height = 400
     screen = pygame.display.set_mode([screen_width, screen_height])
-    intro(screen)
+    #intro(screen)
     time = 0
     score = 0
     speed = 2
