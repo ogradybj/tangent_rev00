@@ -11,6 +11,7 @@ GREEN = (0, 220, 0)
 RED = (220, 0, 0)
 BLUE = (0, 0, 255)
 YELLOW = (235, 235, 35)
+GAMEOVER = False
 
 class Block(pygame.sprite.Sprite):
     """
@@ -45,8 +46,10 @@ class Block(pygame.sprite.Sprite):
             self.image.fill(RED)
             self.color = RED
         elif self.color == RED:
-            print("GAME OVER")
-            gameover()
+            #print("GAME OVER")
+            GAMEOVER = True
+            return GAMEOVER
+            
 
 
 class Ball(pygame.sprite.Sprite):
@@ -179,12 +182,19 @@ def text_objects(text, font):
     textSurface = font.render(text, True, BLACK)
     return textSurface, textSurface.get_rect()
 
-def gameover():
+def gameover(screen, score):
 
     largeText = pygame.font.SysFont("cmr10",115)
     TextSurf, TextRect = text_objects("GAME OVER", largeText)
     TextRect.center = ((400),(100))
     screen.blit(TextSurf, TextRect)
+
+    finalString = "SCORE: %s" %score
+    largeText = pygame.font.SysFont("cmr10",115)
+    TextSurf, TextRect = text_objects(finalString, largeText)
+    TextRect.center = ((400),(200))
+    screen.blit(TextSurf, TextRect)
+
 
     while 1:
         for event in pygame.event.get():
@@ -363,7 +373,9 @@ def main():
             
         for block in block_list:
             if pygame.sprite.collide_rect(player, block):
-                block.update()
+                GAMEOVER = block.update()
+                if GAMEOVER == True:
+                    gameover(screen, score)
         # Calls update() method on every ball in the list
         ball_list.update(speed)
         player.update(speed, onball, colball)
