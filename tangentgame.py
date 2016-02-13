@@ -119,8 +119,8 @@ class Player(pygame.sprite.Sprite):
         self.thetad = self.theta+self.rotdir*3.14159/2
         
 
-        self.dx = speed*2.5*self.xdir
-        self.dy = speed*2.5*self.ydir
+        self.dx = speed*2*self.xdir
+        self.dy = speed*2*self.ydir
     def calcdir(self):
         self.thetavect = numpy.array([math.cos(self.theta), math.sin(self.theta)])
         self.playervect = numpy.array([(self.xdir/self.dirmag),(self.ydir/self.dirmag)])
@@ -155,8 +155,8 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.rotdir = 1
             
-            self.rect.x = zball.rect.center[0]+38*math.cos(self.theta+(0.12*speed))-10
-            self.rect.y = zball.rect.center[1]+38*math.sin(self.theta+(0.12*speed))-10
+            self.rect.x = zball.rect.center[0]+41*math.cos(self.theta+(0.12*speed))-10
+            self.rect.y = zball.rect.center[1]+41*math.sin(self.theta+(0.12*speed))-10
             self.theta = self.theta+(self.rotdir*.09)
 
         elif cluck == False:
@@ -170,8 +170,8 @@ class Player(pygame.sprite.Sprite):
                 self.ydir = self.ydir*(-1)
                 self.rect.y = 6
             self.dirmag = math.sqrt(self.xdir**2+self.ydir**2)
-            self.dx = speed*2.5*self.xdir
-            self.dy = speed*2.5*self.ydir
+            self.dx = speed*2*self.xdir
+            self.dy = speed*2*self.ydir
 
             self.rect.x = self.rect.x+self.dx
             self.rect.y = self.rect.y+self.dy
@@ -242,31 +242,7 @@ def paused(screen):
 
         pygame.display.update()
         #clock.tick(15)
-def intro(screen):
 
-    largeText = pygame.font.SysFont("cmr10",115)
-    TextSurf, TextRect = text_objects("Tangent Arcade Game", largeText)
-    TextRect.center = ((400),(100))
-    screen.blit(TextSurf, TextRect)
-
-    while 1:
-        for event in pygame.event.get():
-
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_g:
-                    main()
-                
-        screen.fill(WHITE)
-        
-
-        #button("Continue",150,450,100,50,green,bright_green,unpause)
-        #button("Quit",550,450,100,50,red,bright_red,quitgame)
-
-        pygame.display.update()
-        #clock.tick(15)
 
 def main():
     #initialize Pygame
@@ -276,10 +252,35 @@ def main():
     screen_width = 800
     screen_height = 400
     screen = pygame.display.set_mode([screen_width, screen_height])
-    #intro(screen)
+    #intro screen, attempted, text not showing up
+    # screen.fill(WHITE)
+    # largeText = pygame.font.SysFont("cmr10",115)
+    # TextSurf, TextRect = text_objects("Tangent Arcade Game", largeText)
+    # TextRect.center = ((400),(100))
+    # screen.blit(TextSurf, TextRect)
+    # intro = True
+
+    # while intro:
+    #     largeText = pygame.font.SysFont("cmr10",115)
+    #     TextSurf, TextRect = text_objects("Tangent Arcade Game", largeText)
+    #     TextRect.center = ((400),(100))
+    #     screen.blit(TextSurf, TextRect)
+
+
+
+    #     for event in pygame.event.get():
+
+    #         if event.type == pygame.QUIT:
+    #             pygame.quit()
+    #             quit()
+    #         if event.type == pygame.KEYDOWN:
+    #             if event.key == pygame.K_g:
+    #                 intro = False
+
     time = 0
     score = 0
     speed = 2
+    diameter = 55
 
     # This is a list of 'sprites.' Each block in the program is
     # added to this list. The list is managed by a class called 'Group.'
@@ -288,18 +289,18 @@ def main():
      
     # This is a list of every sprite. All blocks and the player block as well.
     all_sprites_list = pygame.sprite.Group()
-    end1 = Block(BLACK, 11, 400)
+    end1 = Block(BLACK, 10, 400)
     end1.rect.x = 0
     end1.rect.y = 0
     block_list.add(end1)
-    end2 = Block(BLACK, 11, 400)
-    end2.rect.x = 789
+    end2 = Block(BLACK, 10, 400)
+    end2.rect.x = 790
     end2.rect.y = 0
     block_list.add(end2)
      #creating all the balls, randomly distributed
     for i in range(9):
         # This represents a blall
-        ball = Ball(60, speed)
+        ball = Ball(diameter, speed)
      
         # Set a random location for the block
         ball.rect.x = i*98+screen_width
@@ -363,7 +364,7 @@ def main():
             #calling player.orbit method
 
 
-            if math.sqrt((player.rect.center[0]-ball.rect.center[0])**2+(player.rect.center[1]-ball.rect.center[1])**2) <=36:#pygame.sprite.collide_rect(player, ball):
+            if math.sqrt((player.rect.center[0]-ball.rect.center[0])**2+(player.rect.center[1]-ball.rect.center[1])**2) <=(diameter/2)+7.5:#pygame.sprite.collide_rect(player, ball):
 
                 onball = ball
                 colball = True
